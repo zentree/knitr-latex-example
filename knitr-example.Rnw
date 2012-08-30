@@ -1,0 +1,60 @@
+\documentclass[12pt]{article}
+\usepackage{amsbsy}
+
+% Front matter
+\title{Testing knitr with a barebones \LaTeX document}
+\author{Luis A. Apiolaza\\
+School of Forestry, University of Canterbury}
+\date{30 August 2012}
+
+% Actual document content
+\begin{document}
+
+\maketitle
+
+\section{A simple example}
+
+Linear regression using the \texttt{Loyn.txt} data set, which is part of a project
+studying bird abundance in vegetation patches. Number of birds (abundance) is the
+response variable, while the predictors include patch area in hectares (area), year when
+the patch was isolated from cattle grazing (years), distance to nearest patch (dist),
+distance to nearest larger patch (ldist), an indicator of grazing intensity (grazing, 
+1--5) and altitude (altitude, m.a.s.l).
+
+%% begin.rcode
+% setwd('~/Dropbox/research/2012/knitr')
+% loyn <- read.table('Loyn.txt', header = TRUE)
+%
+% # Simple linear regression
+% m1 <- lm(abundance ~ log(area) + log(dist), data = loyn)
+% summary(m1)
+%
+% par(mfrow = c(2, 2))
+% plot(m1)
+%% end.rcode
+
+Now we could fit the same model using matrix algebra to estimate the regression 
+coefficients. The formula for the estimated coefficients is $\hat{b} = (X'X)^{-1} X'y$:
+
+%% begin.rcode
+% y <- loyn$abundance
+% X <- as.matrix(loyn[, c(2, 4)])
+% X <- cbind(1, log(X))
+%
+% # This works
+% XtX <- t(X)%*%X
+% Xty <- t(X)%*%y
+% (bhat <- solve(XtX)%*%Xty)
+%% end.rcode
+
+%% begin.rcode
+% # However, this stops knitr processing in one
+% # of my computers. There could be something broken
+% # in that particular installation. Notice spaces in source
+%XtX <- t(X) %*% X
+%Xty <- t(X) %*% y
+%(bhat <- solve(XtX) %*% Xty)
+%% end.rcode
+
+
+\end{document}
